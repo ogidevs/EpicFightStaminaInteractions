@@ -65,10 +65,6 @@ public class EpicFightStaminaInteractionsConfig {
             .comment("Stamina cost for using a pickaxe (Default: 1.8)")
             .defineInRange("pickaxeStaminaCost", 1.8D, 0.1D, 10.0D);
 
-    public static final ForgeConfigSpec.DoubleValue GLIDER_STAMINA_COST = BUILDER
-            .comment("Stamina cost per tick while gliding with the glider (Default: 0.3)")
-            .defineInRange("gliderStaminaCost", 0.3D, 0.1D, 10.0D);
-
     public static final ForgeConfigSpec.DoubleValue SPRINT_STAMINA_COST = BUILDER
             .comment("Stamina cost per tick while sprinting (Default: 0.1)")
             .defineInRange("sprintStaminaCost", 0.1D, 0.1D, 10.0D);
@@ -87,9 +83,9 @@ public class EpicFightStaminaInteractionsConfig {
     public static final ForgeConfigSpec.BooleanValue enableAttackStamina = BUILDER
             .comment("Enable or disable stamina cost for attacks (Default: true)")
             .define("enableAttackStamina", true);
-    public static final ForgeConfigSpec.BooleanValue enableGliderStamina = BUILDER
-            .comment("Enable or disable stamina cost for gliding (Default: true)")
-            .define("enableGliderStamina", true);
+    public static final ForgeConfigSpec.BooleanValue enableCampfireBuffs = BUILDER
+            .comment("Enable or disable buffs for resting near campfires (Default: true)")
+            .define("enableCampfireBuffs", true);
     public static final ForgeConfigSpec.BooleanValue enableShieldStamina = BUILDER
             .comment("Enable or disable stamina cost for blocking with shield (Default: true)")
             .define("enableShieldStamina", true);
