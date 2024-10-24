@@ -51,6 +51,9 @@ public class StaminaHandler {
 
     private static final float BOW_STAMINA_COST = EpicFightStaminaInteractionsConfig.BOW_STAMINA_COST.get().floatValue();
     private static final float CROSSBOW_STAMINA_COST = EpicFightStaminaInteractionsConfig.CROSSBOW_STAMINA_COST.get().floatValue();
+    private static final float JUMP_STAMINA_COST = EpicFightStaminaInteractionsConfig.JUMP_STAMINA_COST.get().floatValue();
+    private static final boolean isJumpCostEnabled = EpicFightStaminaInteractionsConfig.enableJumpStamina.get();
+    private static final boolean isSprintCostEnabled = EpicFightStaminaInteractionsConfig.enableSprintStamina.get();
 
     @SubscribeEvent
     public static void onPlayerTick(LivingEvent.LivingTickEvent event) {
@@ -61,17 +64,22 @@ public class StaminaHandler {
             if (playerPatch != null) {
                 float currentStamina = playerPatch.getStamina();
 
-                if(player.isSprinting() && EpicFightStaminaInteractionsConfig.enableSprintStamina.get()) {
+                if(player.isSprinting() && !player.isCreative() && isSprintCostEnabled) {
                     float sprintStaminaCost = EpicFightStaminaInteractionsConfig.SPRINT_STAMINA_COST.get().floatValue();
                     playerPatch.setStamina(Math.max(0.0F, currentStamina - sprintStaminaCost));
-
                     playerPatch.resetActionTick();
                 }
 
-                if(EpicFightStaminaInteractionsConfig.enableAttackStamina.get()) {
-                    Item activeItem = player.getMainHandItem().getItem();
+                if(!player.isCreative() && isJumpCostEnabled && !player.onClimbable() && !player.isSwimming() && !player.isPushedByFluid()) {
+                   if (player.getDeltaMovement().y > 0.0F) {
+                       playerPatch.setStamina(Math.max(0.0F, currentStamina - JUMP_STAMINA_COST));
+                       playerPatch.resetActionTick();
+                   }
+                }
 
-                    if(currentStamina <= 0.0F) {
+                if(!player.isCreative() && EpicFightStaminaInteractionsConfig.enableAttackStamina.get()) {
+                    Item activeItem = player.getMainHandItem().getItem();
+                    if(playerPatch.getStamina() <= 0.0F) {
                         if(activeItem == Items.BOW && player.isUsingItem()) {
                             player.stopUsingItem();
                         } else if (activeItem == Items.CROSSBOW && player.isUsingItem()) {
@@ -88,7 +96,7 @@ public class StaminaHandler {
                     }
 
                     playerPatch.getEventListener().addEventListener(PlayerEventListener.EventType.BASIC_ATTACK_EVENT, playerPatch.getOriginal().getUUID(), basicAttackEvent -> {
-                        if (EpicFightStaminaInteractionsConfig.enableAttackStamina.get() && playerPatch.isBattleMode()) {
+                        if (!player.isCreative() && EpicFightStaminaInteractionsConfig.enableAttackStamina.get() && playerPatch.isBattleMode()) {
                             CapabilityItem weaponCapability = playerPatch.getHoldingItemCapability(InteractionHand.MAIN_HAND);
                             if (weaponCapability != null) {
                                 double weaponDamage = player.getAttribute(Attributes.ATTACK_DAMAGE).getValue();
@@ -96,11 +104,22 @@ public class StaminaHandler {
                                 if(weaponCategory instanceof CapabilityItem.WeaponCategories weaponType) {
                                     float weaponStaminaCost = weaponStaminaCosts.getOrDefault(weaponType, 1.0F);
                                     float attackStaminaCost = (float)(weaponDamage * 0.54D + weaponStaminaCost);
-                                    float newStamina = Math.max(0.0F, playerPatch.getStamina() - attackStaminaCost);
+                                    float newStamina = Math.max(0.0F, currentStamina - attackStaminaCost);
                                     playerPatch.setStamina(newStamina);
                                 }
                             }
                         }
+                    });
+
+
+
+                    playerPatch.getEventListener().addEventListener(PlayerEventListener.EventType.ANIMATION_BEGIN_EVENT, playerPatch.getOriginal().getUUID(), animationBeginEvent ->  {
+                        /*if(playerPatch.isBattleMode()) {
+                            String animationName = animationBeginEvent.getAnimation().getLocation().getNamespace();
+                            PlayerChatMessage chatMessage = PlayerChatMessage.unsigned(player.getUUID(), animationName);
+
+                            player.createCommandSourceStack().sendChatMessage(new OutgoingChatMessage.Player(chatMessage), false, ChatType.bind(ChatType.CHAT, player));
+                        }*/
                     });
                 }
             }
