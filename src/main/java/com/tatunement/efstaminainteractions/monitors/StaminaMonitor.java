@@ -21,12 +21,14 @@ public class StaminaMonitor {
             PlayerPatch<Player> playerPatch = EpicFightCapabilities.getEntityPatch(player, PlayerPatch.class);
             if (playerPatch != null) {
                 float currentStamina = playerPatch.getStamina();
-
                 if (currentStamina <= 0.0F) {
-                    player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 3, true, false, false));
-                    player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, 3, true, false, false));
-                    player.addEffect(new MobEffectInstance(ModEffects.FATIGUE.get(), 100, 1, true, false, false));
                     player.setSprinting(false);
+                    if(!player.hasEffect(ModEffects.FATIGUE.get())) {
+                        player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 110, 3, true, false, false));
+                        player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 110, 3, true, false, false));
+                        player.addEffect(new MobEffectInstance(ModEffects.FATIGUE.get(), 110, 1, true, false, false));
+                    }
+                    playerPatch.setStamina(0.0F);
                 }
             }
         }
