@@ -26,7 +26,6 @@ public class EpicFightStaminaInteractionsMod {
 
         ModEffects.MOB_EFFECTS.register(context.getModEventBus());
 
-
         context.registerConfig(ModConfig.Type.COMMON, EpicFightStaminaInteractionsConfig.CONFIG_SPEC);
     }
 
@@ -34,6 +33,4 @@ public class EpicFightStaminaInteractionsMod {
     private void commonSetup(final FMLCommonSetupEvent event) {
         LOGGER.info("Loading EpicFight Stamina Interactions...");
     }
-
-
 }

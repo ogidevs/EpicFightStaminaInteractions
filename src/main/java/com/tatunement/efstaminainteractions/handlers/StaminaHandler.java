@@ -26,6 +26,8 @@ public class StaminaHandler {
 
     private static final Map<CapabilityItem.WeaponCategories, Float> weaponStaminaCosts = new HashMap<>();
 
+    private static final Map<String, Double> animationsStaminaCosts = AnimationCostConfigHelper.parseAnimationCosts();
+
     public StaminaHandler() {
         Object[][] weaponData = {
                 {CapabilityItem.WeaponCategories.AXE, EpicFightStaminaInteractionsConfig.AXE_STAMINA_COST},
@@ -70,7 +72,7 @@ public class StaminaHandler {
                     playerPatch.resetActionTick();
                 }
 
-                if(!player.isCreative() && isJumpCostEnabled && !player.onClimbable() && !player.isSwimming() && !player.isPushedByFluid()) {
+                if(!player.isCreative() && isJumpCostEnabled && !player.onClimbable() && !player.isSwimming()) {
                    if (player.getDeltaMovement().y > 0.0F) {
                        playerPatch.setStamina(Math.max(0.0F, currentStamina - JUMP_STAMINA_COST));
                        playerPatch.resetActionTick();
@@ -114,12 +116,11 @@ public class StaminaHandler {
 
 
                     playerPatch.getEventListener().addEventListener(PlayerEventListener.EventType.ANIMATION_BEGIN_EVENT, playerPatch.getOriginal().getUUID(), animationBeginEvent ->  {
-                        /*if(playerPatch.isBattleMode()) {
-                            String animationName = animationBeginEvent.getAnimation().getLocation().getNamespace();
+                        if(playerPatch.isBattleMode() && EpicFightStaminaInteractionsConfig.enableDebugMode.get() && Minecraft.getInstance().isSingleplayer()) {
+                            String animationName = animationBeginEvent.getAnimation().getLocation().getPath();
                             PlayerChatMessage chatMessage = PlayerChatMessage.unsigned(player.getUUID(), animationName);
-
                             player.createCommandSourceStack().sendChatMessage(new OutgoingChatMessage.Player(chatMessage), false, ChatType.bind(ChatType.CHAT, player));
-                        }*/
+                        }
                     });
                 }
             }

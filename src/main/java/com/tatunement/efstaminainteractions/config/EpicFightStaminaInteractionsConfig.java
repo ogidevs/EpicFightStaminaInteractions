@@ -4,11 +4,13 @@ package com.tatunement.efstaminainteractions.config;
 import com.tatunement.efstaminainteractions.EpicFightStaminaInteractionsMod;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.common.Mod;
+import org.apache.commons.compress.utils.Lists;
+
+import java.util.List;
 
 @Mod.EventBusSubscriber(modid = EpicFightStaminaInteractionsMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class EpicFightStaminaInteractionsConfig {
     public static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
-
     public static final ForgeConfigSpec.DoubleValue AXE_STAMINA_COST = BUILDER
             .comment("Stamina cost for using an axe (Default: 3.5)")
             .defineInRange("axeStaminaCost", 3.5D, 0.1D, 10.0D);
@@ -81,7 +83,15 @@ public class EpicFightStaminaInteractionsConfig {
     public static final ForgeConfigSpec.BooleanValue enableAnimationCosts = BUILDER
             .comment("Enable or disable stamina multiplier for different animations (Default: true)")
             .define("enableAnimationCost", true);
-
-
+    public static final ForgeConfigSpec.BooleanValue enableDebugMode = BUILDER
+            .comment("Enable or disable Debug Mode (writes in chat the path of every animation when in battle mode. Default: false)")
+            .define("enableDebugMode", false);
+    public static final ForgeConfigSpec.ConfigValue<List<? extends String>> customAnimationCosts = BUILDER
+            .comment("You can add your own stamina by writing the path of the attack animation and the cost.")
+            .comment("Example: customAnimationCosts = [\"animmodels/animations/biped/living/greatsword_airslash.json:2.5\", \"animmodels/animations/biped/living/spear_dash.json:3.5\"]")
+            .comment("Keep in mind that the cost is added to the attack cost!")
+            .defineList("customAnimationCosts", Lists.newArrayList(), (element)-> element instanceof String);
     public static final ForgeConfigSpec CONFIG_SPEC = BUILDER.build();
 }
+
+
