@@ -89,6 +89,9 @@ public class StaminaHandler {
 
                     playerPatch.getEventListener().addEventListener(PlayerEventListener.EventType.BASIC_ATTACK_EVENT, playerPatch.getOriginal().getUUID(), basicAttackEvent -> {
                         if (EpicFightStaminaInteractionsConfig.enableAttackStamina.get() && playerPatch.isBattleMode()) {
+                            if(playerPatch.getStamina() <= 0.0F) {
+                                event.setCanceled(true);
+                            }
                             CapabilityItem weaponCapability = playerPatch.getHoldingItemCapability(InteractionHand.MAIN_HAND);
                             if (weaponCapability != null) {
                                 double weaponDamage = player.getAttribute(Attributes.ATTACK_DAMAGE).getValue();
