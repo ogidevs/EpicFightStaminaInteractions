@@ -15,6 +15,9 @@ import yesman.epicfight.world.entity.ai.attribute.EpicFightAttributes;
 public class StaminaResetHandler {
 
     @SubscribeEvent
+    public static void onPlayerLoad(PlayerEvent.LoadFromFile event) { resetPlayerStamina(event.getEntity());}
+
+    @SubscribeEvent
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
         resetPlayerStamina(event.getEntity());
     }

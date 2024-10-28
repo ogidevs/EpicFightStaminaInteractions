@@ -18,8 +18,7 @@ Minecraft Forge Mod Loader Version: 47.3.11
 Epic Fight: https://www.curseforge.com/minecraft/mc-mods/epic-fight-mod
 
 ## Known bugs
-- Each time you'll load a world, inventory will render the potion effect as if you had 0 stamina.
-- When reaching 0 stamina the effect given you by no stamina will refresh until you get 1 stamina point back.
+- When loading a world stamina is set as 100 instead of the latest value when it was saved.
 
 ## Special Thanks
 The Epic Fight Development team and their discord for the help:

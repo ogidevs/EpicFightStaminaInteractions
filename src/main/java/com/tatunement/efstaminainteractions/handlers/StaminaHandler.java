@@ -58,9 +58,6 @@ public class StaminaHandler {
 
     private static final float BOW_STAMINA_COST = EpicFightStaminaInteractionsConfig.BOW_STAMINA_COST.get().floatValue();
     private static final float CROSSBOW_STAMINA_COST = EpicFightStaminaInteractionsConfig.CROSSBOW_STAMINA_COST.get().floatValue();
-    private static final float JUMP_STAMINA_COST = EpicFightStaminaInteractionsConfig.JUMP_STAMINA_COST.get().floatValue();
-    private static final boolean isJumpCostEnabled = EpicFightStaminaInteractionsConfig.enableJumpStamina.get();
-    private static final boolean isSprintCostEnabled = EpicFightStaminaInteractionsConfig.enableSprintStamina.get();
 
     @SubscribeEvent
     public static void onPlayerTick(LivingEvent.LivingTickEvent event) {
@@ -103,7 +100,10 @@ public class StaminaHandler {
                     }
 
                     playerPatch.getEventListener().addEventListener(PlayerEventListener.EventType.BASIC_ATTACK_EVENT, playerPatch.getOriginal().getUUID(), basicAttackEvent -> {
-                        if (!player.isCreative() && EpicFightStaminaInteractionsConfig.enableAttackStamina.get() && playerPatch.isBattleMode()) {
+                        if (EpicFightStaminaInteractionsConfig.enableAttackStamina.get() && playerPatch.isBattleMode()) {
+                            if(playerPatch.getStamina() <= 0.0F) {
+                                event.setCanceled(true);
+                            }
                             CapabilityItem weaponCapability = playerPatch.getHoldingItemCapability(InteractionHand.MAIN_HAND);
                             if (weaponCapability != null) {
                                 double weaponDamage = player.getAttribute(Attributes.ATTACK_DAMAGE).getValue();
@@ -111,7 +111,7 @@ public class StaminaHandler {
                                 if(weaponCategory instanceof CapabilityItem.WeaponCategories weaponType) {
                                     float weaponStaminaCost = weaponStaminaCosts.getOrDefault(weaponType, 1.0F);
                                     float attackStaminaCost = (float)(weaponDamage * 0.54D + weaponStaminaCost);
-                                    float newStamina = Math.max(0.0F, currentStamina - attackStaminaCost);
+                                    float newStamina = Math.max(0.0F, playerPatch.getStamina() - attackStaminaCost);
                                     playerPatch.setStamina(newStamina);
                                 }
                             }
