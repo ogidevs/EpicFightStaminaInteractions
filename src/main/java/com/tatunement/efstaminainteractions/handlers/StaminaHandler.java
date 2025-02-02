@@ -3,6 +3,7 @@ package com.tatunement.efstaminainteractions.handlers;
 import com.tatunement.efstaminainteractions.EpicFightStaminaInteractionsMod;
 import com.tatunement.efstaminainteractions.config.AnimationCostConfigHelper;
 import com.tatunement.efstaminainteractions.config.EpicFightStaminaInteractionsConfig;
+import com.tatunement.efstaminainteractions.registries.WeaponStaminaCostRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.OutgoingChatMessage;
@@ -23,41 +24,24 @@ import yesman.epicfight.world.capabilities.item.CapabilityItem;
 import yesman.epicfight.world.capabilities.item.WeaponCategory;
 import yesman.epicfight.world.entity.eventlistener.PlayerEventListener;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = EpicFightStaminaInteractionsMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class StaminaHandler {
 
-    private static final Map<CapabilityItem.WeaponCategories, Float> weaponStaminaCosts = new HashMap<>();
+    private static final Map<WeaponCategory, Float> weaponStaminaCosts = WeaponStaminaCostRegistry.getWeaponStaminaCosts();
 
     private static final Map<String, Double> animationsStaminaCosts = AnimationCostConfigHelper.parseAnimationCosts();
 
     public StaminaHandler() {
-        Object[][] weaponData = {
-                {CapabilityItem.WeaponCategories.AXE, EpicFightStaminaInteractionsConfig.AXE_STAMINA_COST},
-                {CapabilityItem.WeaponCategories.SWORD, EpicFightStaminaInteractionsConfig.SWORD_STAMINA_COST},
-                {CapabilityItem.WeaponCategories.SPEAR, EpicFightStaminaInteractionsConfig.SPEAR_STAMINA_COST},
-                {CapabilityItem.WeaponCategories.GREATSWORD, EpicFightStaminaInteractionsConfig.GREATSWORD_STAMINA_COST},
-                {CapabilityItem.WeaponCategories.DAGGER, EpicFightStaminaInteractionsConfig.DAGGER_STAMINA_COST},
-                {CapabilityItem.WeaponCategories.TRIDENT, EpicFightStaminaInteractionsConfig.TRIDENT_STAMINA_COST},
-                {CapabilityItem.WeaponCategories.UCHIGATANA, EpicFightStaminaInteractionsConfig.UCHIGATANA_STAMINA_COST},
-                {CapabilityItem.WeaponCategories.TACHI, EpicFightStaminaInteractionsConfig.TACHI_STAMINA_COST},
-                {CapabilityItem.WeaponCategories.LONGSWORD, EpicFightStaminaInteractionsConfig.LONGSWORD_STAMINA_COST},
-                {CapabilityItem.WeaponCategories.HOE, EpicFightStaminaInteractionsConfig.HOE_STAMINA_COST},
-                {CapabilityItem.WeaponCategories.PICKAXE, EpicFightStaminaInteractionsConfig.PICKAXE_STAMINA_COST},
-                {CapabilityItem.WeaponCategories.SHOVEL, EpicFightStaminaInteractionsConfig.SHOVEL_STAMINA_COST},
-        };
 
-        for(Object[] weapon : weaponData) {
-            CapabilityItem.WeaponCategories category = (CapabilityItem.WeaponCategories) weapon[0];
-            Double staminaCost = (Double) weapon[1];
-            weaponStaminaCosts.put(category, staminaCost.floatValue());
-        }
     }
 
     private static final float BOW_STAMINA_COST = EpicFightStaminaInteractionsConfig.BOW_STAMINA_COST.get().floatValue();
     private static final float CROSSBOW_STAMINA_COST = EpicFightStaminaInteractionsConfig.CROSSBOW_STAMINA_COST.get().floatValue();
+    private static final float JUMP_STAMINA_COST = EpicFightStaminaInteractionsConfig.JUMP_STAMINA_COST.get().floatValue();
+    private static final boolean isJumpCostEnabled = EpicFightStaminaInteractionsConfig.enableJumpStamina.get();
+    private static final boolean isSprintCostEnabled = EpicFightStaminaInteractionsConfig.enableSprintStamina.get();
 
     @SubscribeEvent
     public static void onPlayerTick(LivingEvent.LivingTickEvent event) {
@@ -111,7 +95,7 @@ public class StaminaHandler {
                                 if(weaponCategory instanceof CapabilityItem.WeaponCategories weaponType) {
                                     float weaponStaminaCost = weaponStaminaCosts.getOrDefault(weaponType, 1.0F);
                                     float attackStaminaCost = (float)(weaponDamage * 0.54D + weaponStaminaCost);
-                                    float newStamina = Math.max(0.0F, playerPatch.getStamina() - attackStaminaCost);
+                                    float newStamina = Math.max(0.0F, currentStamina - attackStaminaCost);
                                     playerPatch.setStamina(newStamina);
                                 }
                             }
@@ -142,6 +126,7 @@ public class StaminaHandler {
                 if (playerPatch != null) {
                     float currentStamina = playerPatch.getStamina();
                     if(currentStamina <= 0.0F) {
+                        player.getCooldowns().addCooldown(player.getUseItem().getItem(), 80);
                         player.stopUsingItem();
                     } else {
                         float blockedDamage = event.getBlockedDamage();

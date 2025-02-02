@@ -3,6 +3,7 @@ package com.tatunement.efstaminainteractions;
 import com.mojang.logging.LogUtils;
 import com.tatunement.efstaminainteractions.config.EpicFightStaminaInteractionsConfig;
 import com.tatunement.efstaminainteractions.effects.ModEffects;
+import com.tatunement.efstaminainteractions.registries.WeaponStaminaCostRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -23,6 +24,9 @@ public class EpicFightStaminaInteractionsMod {
         modEventBus.addListener(this::commonSetup);
 
         MinecraftForge.EVENT_BUS.register(this);
+
+        LOGGER.info("Loading stamina consumption for each weapon category...");
+        WeaponStaminaCostRegistry.registerWeaponStamina();
 
         ModEffects.MOB_EFFECTS.register(context.getModEventBus());
 
