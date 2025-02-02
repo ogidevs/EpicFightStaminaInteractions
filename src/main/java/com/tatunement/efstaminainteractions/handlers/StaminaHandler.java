@@ -43,6 +43,8 @@ public class StaminaHandler {
     private static final boolean isJumpCostEnabled = EpicFightStaminaInteractionsConfig.enableJumpStamina.get();
     private static final boolean isSprintCostEnabled = EpicFightStaminaInteractionsConfig.enableSprintStamina.get();
 
+    private static final boolean isDamageScalingCostEnabled = EpicFightStaminaInteractionsConfig.enableDamageScalingCost.get();
+
     @SubscribeEvent
     public static void onPlayerTick(LivingEvent.LivingTickEvent event) {
         LivingEntity entity = event.getEntity();
@@ -90,7 +92,7 @@ public class StaminaHandler {
                             }
                             CapabilityItem weaponCapability = playerPatch.getHoldingItemCapability(InteractionHand.MAIN_HAND);
                             if (weaponCapability != null) {
-                                double weaponDamage = player.getAttribute(Attributes.ATTACK_DAMAGE).getValue();
+                                double weaponDamage = isDamageScalingCostEnabled ? player.getAttribute(Attributes.ATTACK_DAMAGE).getValue() : 0.0;
                                 WeaponCategory weaponCategory = weaponCapability.getWeaponCategory();
                                 if(weaponCategory instanceof CapabilityItem.WeaponCategories weaponType) {
                                     float weaponStaminaCost = weaponStaminaCosts.getOrDefault(weaponType, 1.0F);

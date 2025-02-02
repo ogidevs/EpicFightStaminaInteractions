@@ -86,6 +86,9 @@ public class EpicFightStaminaInteractionsConfig {
     public static final ForgeConfigSpec.BooleanValue enableDebugMode = BUILDER
             .comment("Enable or disable Debug Mode (writes in chat the path of every animation when in battle mode. Default: false)")
             .define("enableDebugMode", false);
+    public static final ForgeConfigSpec.BooleanValue enableDamageScalingCost = BUILDER
+            .comment("Enable or disable stamina multiplier based on weapon damage (Every attack will now have the cost of the stamina set in this file or in datapacks. Default: true)")
+            .define("enableDamageScalingCost", true);
     public static final ForgeConfigSpec.ConfigValue<List<? extends String>> customAnimationCosts = BUILDER
             .comment("You can add your own stamina by writing the path of the attack animation and the cost.")
             .comment("Example: customAnimationCosts = [\"animmodels/animations/biped/living/greatsword_airslash.json:2.5\", \"animmodels/animations/biped/living/spear_dash.json:3.5\"]")
