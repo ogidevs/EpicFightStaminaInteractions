@@ -1,6 +1,7 @@
 package com.tatunement.efstaminainteractions.monitors;
 
 import com.tatunement.efstaminainteractions.EpicFightStaminaInteractionsMod;
+import com.tatunement.efstaminainteractions.animations.StaminaAnimations;
 import com.tatunement.efstaminainteractions.effects.ModEffects;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -29,6 +30,12 @@ public class StaminaMonitor {
                         player.addEffect(new MobEffectInstance(ModEffects.FATIGUE.get(), 110, 1, true, false, false));
                     }
                     playerPatch.setStamina(0.0F);
+                    if (player.xxa > 0 || player.yya > 0) {
+                        playerPatch.playAnimationSynchronized(StaminaAnimations.WALKING_TIRED_BIPED_ANIMATION, 0);
+                    } else {
+                        playerPatch.playAnimationSynchronized(StaminaAnimations.TIRED_OPENING_BIPED_ANIMATION, 0);
+                        playerPatch.playAnimationSynchronized(StaminaAnimations.TIRED_LOOPING_BIPED_ANIMATION,0);
+                    }
                 }
             }
         }

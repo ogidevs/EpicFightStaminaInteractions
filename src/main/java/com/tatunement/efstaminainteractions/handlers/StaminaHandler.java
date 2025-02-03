@@ -1,8 +1,8 @@
 package com.tatunement.efstaminainteractions.handlers;
 
 import com.tatunement.efstaminainteractions.EpicFightStaminaInteractionsMod;
-import com.tatunement.efstaminainteractions.config.AnimationCostConfigHelper;
 import com.tatunement.efstaminainteractions.config.EpicFightStaminaInteractionsConfig;
+import com.tatunement.efstaminainteractions.registries.AnimationStaminaCostRegistry;
 import com.tatunement.efstaminainteractions.registries.WeaponStaminaCostRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.ChatType;
@@ -31,7 +31,7 @@ public class StaminaHandler {
 
     private static final Map<WeaponCategory, Float> weaponStaminaCosts = WeaponStaminaCostRegistry.getWeaponStaminaCosts();
 
-    private static final Map<String, Double> animationsStaminaCosts = AnimationCostConfigHelper.parseAnimationCosts();
+    private static final Map<String, Float> animationsStaminaCosts = AnimationStaminaCostRegistry.getAnimationCostMap();
 
     public StaminaHandler() {
 
@@ -42,8 +42,8 @@ public class StaminaHandler {
     private static final float JUMP_STAMINA_COST = EpicFightStaminaInteractionsConfig.JUMP_STAMINA_COST.get().floatValue();
     private static final boolean isJumpCostEnabled = EpicFightStaminaInteractionsConfig.enableJumpStamina.get();
     private static final boolean isSprintCostEnabled = EpicFightStaminaInteractionsConfig.enableSprintStamina.get();
-
     private static final boolean isDamageScalingCostEnabled = EpicFightStaminaInteractionsConfig.enableDamageScalingCost.get();
+    private static final boolean isAnimationCostEnabled = EpicFightStaminaInteractionsConfig.enableAnimationCosts.get();
 
     @SubscribeEvent
     public static void onPlayerTick(LivingEvent.LivingTickEvent event) {
@@ -92,7 +92,7 @@ public class StaminaHandler {
                             }
                             CapabilityItem weaponCapability = playerPatch.getHoldingItemCapability(InteractionHand.MAIN_HAND);
                             if (weaponCapability != null) {
-                                double weaponDamage = isDamageScalingCostEnabled ? player.getAttribute(Attributes.ATTACK_DAMAGE).getValue() : 0.0;
+                                double weaponDamage = isDamageScalingCostEnabled ? player.getAttribute(Attributes.ATTACK_DAMAGE).getValue() : 0.0D;
                                 WeaponCategory weaponCategory = weaponCapability.getWeaponCategory();
                                 if(weaponCategory instanceof CapabilityItem.WeaponCategories weaponType) {
                                     float weaponStaminaCost = weaponStaminaCosts.getOrDefault(weaponType, 1.0F);
@@ -107,10 +107,21 @@ public class StaminaHandler {
 
 
                     playerPatch.getEventListener().addEventListener(PlayerEventListener.EventType.ANIMATION_BEGIN_EVENT, playerPatch.getOriginal().getUUID(), animationBeginEvent ->  {
+                        String animationName = animationBeginEvent.getAnimation().getLocation().getPath();
                         if(playerPatch.isBattleMode() && EpicFightStaminaInteractionsConfig.enableDebugMode.get() && Minecraft.getInstance().isSingleplayer()) {
-                            String animationName = animationBeginEvent.getAnimation().getLocation().getPath();
                             PlayerChatMessage chatMessage = PlayerChatMessage.unsigned(player.getUUID(), animationName);
                             player.createCommandSourceStack().sendChatMessage(new OutgoingChatMessage.Player(chatMessage), false, ChatType.bind(ChatType.CHAT, player));
+                        }
+                    });
+
+                    playerPatch.getEventListener().addEventListener(PlayerEventListener.EventType.ANIMATION_END_EVENT, playerPatch.getOriginal().getUUID(), animationEndEvent -> {
+                        if(isAnimationCostEnabled) {
+                            String animationPath = animationEndEvent.getAnimation().getLocation().getPath();
+                            if(animationsStaminaCosts.containsKey(animationPath)) {
+                                float animationCost = animationsStaminaCosts.getOrDefault(animationPath, 1.0F);
+                                float newStamina = Math.max(0.0F, currentStamina - animationCost);
+                                playerPatch.setStamina(newStamina);
+                            }
                         }
                     });
                 }
