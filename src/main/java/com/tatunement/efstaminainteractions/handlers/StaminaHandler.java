@@ -18,6 +18,7 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.ShieldBlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import yesman.epicfight.api.animation.types.StaticAnimation;
 import yesman.epicfight.world.capabilities.EpicFightCapabilities;
 import yesman.epicfight.world.capabilities.entitypatch.player.PlayerPatch;
 import yesman.epicfight.world.capabilities.item.CapabilityItem;
@@ -107,23 +108,23 @@ public class StaminaHandler {
 
 
                     playerPatch.getEventListener().addEventListener(PlayerEventListener.EventType.ANIMATION_BEGIN_EVENT, playerPatch.getOriginal().getUUID(), animationBeginEvent ->  {
-                        String animationName = animationBeginEvent.getAnimation().getLocation().getPath();
+                        String animationName =((StaticAnimation) animationBeginEvent.getAnimation().getRealAnimation()).getLocation().getPath();
                         if(playerPatch.isBattleMode() && EpicFightStaminaInteractionsConfig.enableDebugMode.get() && Minecraft.getInstance().isSingleplayer()) {
                             PlayerChatMessage chatMessage = PlayerChatMessage.unsigned(player.getUUID(), animationName);
                             player.createCommandSourceStack().sendChatMessage(new OutgoingChatMessage.Player(chatMessage), false, ChatType.bind(ChatType.CHAT, player));
                         }
                     });
 
-                    playerPatch.getEventListener().addEventListener(PlayerEventListener.EventType.ANIMATION_END_EVENT, playerPatch.getOriginal().getUUID(), animationEndEvent -> {
+                    /*playerPatch.getEventListener().addEventListener(PlayerEventListener.EventType.ANIMATION_END_EVENT, playerPatch.getOriginal().getUUID(), animationEndEvent -> {
                         if(isAnimationCostEnabled) {
-                            String animationPath = animationEndEvent.getAnimation().getLocation().getPath();
+                            String animationPath = ((StaticAnimation) animationEndEvent.getAnimation().getRealAnimation()).getLocation().getPath();
                             if(animationsStaminaCosts.containsKey(animationPath)) {
                                 float animationCost = animationsStaminaCosts.getOrDefault(animationPath, 1.0F);
                                 float newStamina = Math.max(0.0F, currentStamina - animationCost);
                                 playerPatch.setStamina(newStamina);
                             }
                         }
-                    });
+                    });*/
                 }
             }
         }
