@@ -3,6 +3,7 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'org.spongepowered.mixin' version '0.7.+'
 }
 
 version = mod_version
@@ -79,6 +80,10 @@ minecraft {
                     source sourceSets.main
                 }
             }
+
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
+            args '-mixin.config=mixins.efstaminainteraction.json'
         }
 
         client {
@@ -129,6 +134,11 @@ repositories {
     }
 }
 
+mixin {
+    add sourceSets.main, "mixins.efstaminainteractions.refmap.json"
+    config 'mixins.efstaminainteractions.json'
+}
+
 dependencies {
     // Specify the version of Minecraft to use.
     // Any artifact can be supplied so long as it has a "userdev" classifier artifact and is a compatible patcher artifact.
@@ -153,6 +163,8 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
     implementation fg.deobf("curse.maven:epic-fight-mod-405076:5811659")
+
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

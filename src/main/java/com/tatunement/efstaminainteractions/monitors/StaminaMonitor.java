@@ -25,7 +25,7 @@ public class StaminaMonitor {
             if (playerPatch != null) {
                 float currentStamina = playerPatch.getStamina();
                 if (currentStamina <= 0.0F) {
-                    playerPatch.setStamina(0.1F);
+                    playerPatch.setStamina(0.0F);
                     if (player.isSprinting()) {
                         player.setSprinting(false);
                     }
@@ -36,16 +36,6 @@ public class StaminaMonitor {
                     }
                 }
             }
-        }
-    }
-
-    @SubscribeEvent
-    public static void OnLivingMotionUpdate(UpdatePlayerMotionEvent event) {
-        if(event.getMotion().isSame(StaminaMotions.TIRED_WALK)) {
-            event.getPlayerPatch().playAnimationSynchronized(StaminaAnimations.WALKING_TIRED_BIPED_ANIMATION, 0);
-        }
-        if(event.getMotion().isSame(StaminaMotions.TIRED_IDLE)) {
-            event.getPlayerPatch().playAnimationSynchronized(StaminaAnimations.TIRED_LOOPING_BIPED_ANIMATION, 0);
         }
     }
 }
