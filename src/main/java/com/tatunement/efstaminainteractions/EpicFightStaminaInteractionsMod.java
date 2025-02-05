@@ -13,7 +13,9 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 import org.spongepowered.asm.launch.MixinBootstrap;
+import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.Mixins;
+import org.spongepowered.asm.service.MixinService;
 
 @Mod(EpicFightStaminaInteractionsMod.MODID)
 public class EpicFightStaminaInteractionsMod {
@@ -32,8 +34,9 @@ public class EpicFightStaminaInteractionsMod {
         WeaponStaminaCostRegistry.registerWeaponStamina();
         LOGGER.info("Loading customized stamina cost for animations if set...");
         AnimationStaminaCostRegistry.registerAnimationStamina();
-        LOGGER.info("Loading Mixins configuration");;
-        Mixins.addConfiguration("META-INF/mixins.efstaminainteractions.json");
+        LOGGER.info("Loading Mixins configuration");
+        MixinBootstrap.init();
+        Mixins.addConfiguration("mixins.efstaminainteractions.json");
         LOGGER.info(Mixins.getConfigs().toString());
 
         ModEffects.MOB_EFFECTS.register(context.getModEventBus());
