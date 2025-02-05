@@ -88,7 +88,7 @@ public class StaminaHandler {
 
                     playerPatch.getEventListener().addEventListener(PlayerEventListener.EventType.BASIC_ATTACK_EVENT, playerPatch.getOriginal().getUUID(), basicAttackEvent -> {
                         if (EpicFightStaminaInteractionsConfig.enableAttackStamina.get() && playerPatch.isBattleMode()) {
-                            if(playerPatch.getStamina() <= 0.0F) {
+                            if(playerPatch.getStamina() == 0.0F && event.isCancelable()) {
                                 event.setCanceled(true);
                             }
                             CapabilityItem weaponCapability = playerPatch.getHoldingItemCapability(InteractionHand.MAIN_HAND);
@@ -108,23 +108,23 @@ public class StaminaHandler {
 
 
                     playerPatch.getEventListener().addEventListener(PlayerEventListener.EventType.ANIMATION_BEGIN_EVENT, playerPatch.getOriginal().getUUID(), animationBeginEvent ->  {
-                        String animationName =((StaticAnimation) animationBeginEvent.getAnimation().getRealAnimation()).getLocation().getPath();
+                        String animationName = ((StaticAnimation) animationBeginEvent.getAnimation().getRealAnimation()).getLocation() != null ? ((StaticAnimation) animationBeginEvent.getAnimation().getRealAnimation()).getLocation().getPath() : "Cant Load Animation";
                         if(playerPatch.isBattleMode() && EpicFightStaminaInteractionsConfig.enableDebugMode.get() && Minecraft.getInstance().isSingleplayer()) {
-                            PlayerChatMessage chatMessage = PlayerChatMessage.unsigned(player.getUUID(), animationName);
+                            PlayerChatMessage chatMessage = PlayerChatMessage.unsigned(player.getUUID(), "[DEBUG] " + animationName);
                             player.createCommandSourceStack().sendChatMessage(new OutgoingChatMessage.Player(chatMessage), false, ChatType.bind(ChatType.CHAT, player));
                         }
                     });
 
-                    /*playerPatch.getEventListener().addEventListener(PlayerEventListener.EventType.ANIMATION_END_EVENT, playerPatch.getOriginal().getUUID(), animationEndEvent -> {
+                    playerPatch.getEventListener().addEventListener(PlayerEventListener.EventType.ANIMATION_END_EVENT, playerPatch.getOriginal().getUUID(), animationEndEvent -> {
                         if(isAnimationCostEnabled) {
-                            String animationPath = ((StaticAnimation) animationEndEvent.getAnimation().getRealAnimation()).getLocation().getPath();
-                            if(animationsStaminaCosts.containsKey(animationPath)) {
+                            String animationPath =((StaticAnimation) animationEndEvent.getAnimation().getRealAnimation()).getLocation() != null ? ((StaticAnimation) animationEndEvent.getAnimation().getRealAnimation()).getLocation().getPath() : "";
+                            if((!animationsStaminaCosts.isEmpty() || !animationPath.isEmpty()) && animationsStaminaCosts.containsKey(animationPath)) {
                                 float animationCost = animationsStaminaCosts.getOrDefault(animationPath, 1.0F);
                                 float newStamina = Math.max(0.0F, currentStamina - animationCost);
                                 playerPatch.setStamina(newStamina);
                             }
                         }
-                    });*/
+                    });
                 }
             }
         }
