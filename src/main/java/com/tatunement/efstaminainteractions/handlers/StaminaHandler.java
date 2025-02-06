@@ -17,6 +17,7 @@ import net.minecraft.world.item.Items;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.ShieldBlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fml.common.Mod;
 import yesman.epicfight.api.animation.types.StaticAnimation;
 import yesman.epicfight.world.capabilities.EpicFightCapabilities;
@@ -61,11 +62,11 @@ public class StaminaHandler {
                     playerPatch.resetActionTick();
                 }
 
-                if(!player.isCreative() && isJumpCostEnabled && !player.onClimbable() && !player.isSwimming()) {
-                   if (player.getDeltaMovement().y > 0.0F) {
-                       playerPatch.setStamina(Math.max(0.0F, currentStamina - JUMP_STAMINA_COST));
-                       playerPatch.resetActionTick();
-                   }
+                if(manageJumpingConditions(player)) {
+                    if (player.getDeltaMovement().y > 0.05F) { //0.05 because by tests it is the value that has been more consistent with consuming less stamina as possible when going out of water
+                        playerPatch.setStamina(Math.max(0.0F, currentStamina - JUMP_STAMINA_COST));
+                        playerPatch.resetActionTick();
+                    }
                 }
 
                 if(!player.isCreative() && EpicFightStaminaInteractionsConfig.enableAttackStamina.get()) {
@@ -152,5 +153,9 @@ public class StaminaHandler {
                 }
             }
         }
+    }
+
+    private static boolean manageJumpingConditions(Player player) {
+        return isJumpCostEnabled && (!player.isCreative() && !player.onClimbable() && !player.isSwimming() && !player.isInWater() && !player.isSleeping());
     }
 }
