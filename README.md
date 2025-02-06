@@ -7,7 +7,7 @@ I also removed the requirement of having the VC Glider mod for it to function pr
 ## What the mod does?
 The mod makes it so that when you perform an actions as: Attacking, Sprinting, Using a Bow/Crossbow, Blocking with a shield will consume Epic Fight's stamina in a Souls-like type of mechanic.
 
-After stamina reaches 0, you will receive a potion effect that will completely stop your movement making you more vulnerable to attacks for a couple instants.
+After stamina reaches 0, you will receive a potion effect that will completely slow your movement making you more vulnerable to attacks for a couple instants.
 
 It also adds some buffs when resting (crouching) near campfires (Each campfire gives you different effects).
 
@@ -19,8 +19,16 @@ Epic Fight: https://www.curseforge.com/minecraft/mc-mods/epic-fight-mod
 
 ## Known bugs
 - When loading a world stamina is set as 100 instead of the latest value when it was saved.
+- A single tick of the animation of attack will happen even if stamina reaches 0 if mouse is spammed... No Damage will be done though and tired animation will reprise where left
 
 ## Special Thanks
+
+- **WATOTO** from the Epic fight discord for giving me the two animations that have been added in this mod, thanks for support
+- **Forixaim** for suggesting me the registry idea to implement APIs and Datapacks
+- **M3tte** of the **"E.G.O. Weapons"** for explaining me how mixins and Living Motions
+- **Yonchi Chikito** for listening me vent and thinking with me on how to run the animations
+- **Yesssman** for creating Epic Fight and for patiently giving support to everyone in the Developers section of the discord
+
 The Epic Fight Development team and their discord for the help:
 - https://discord.gg/V7tZgNsG
 - https://github.com/Yesssssman/epicfightmod
