@@ -30,6 +30,9 @@ public class EpicFightStaminaInteractionsMod {
 
         MinecraftForge.EVENT_BUS.register(this);
 
+        LOGGER.info("Reading Configuration File");
+        context.registerConfig(ModConfig.Type.COMMON, EpicFightStaminaInteractionsConfig.CONFIG_SPEC);
+
         LOGGER.info("Loading stamina consumption for each weapon category...");
         WeaponStaminaCostRegistry.registerWeaponStamina();
         LOGGER.info("Loading customized stamina cost for animations if set...");
@@ -40,8 +43,6 @@ public class EpicFightStaminaInteractionsMod {
         LOGGER.info(Mixins.getConfigs().toString());
 
         ModEffects.MOB_EFFECTS.register(context.getModEventBus());
-
-        context.registerConfig(ModConfig.Type.COMMON, EpicFightStaminaInteractionsConfig.CONFIG_SPEC);
     }
 
 
