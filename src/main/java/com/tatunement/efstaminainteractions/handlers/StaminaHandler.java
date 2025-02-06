@@ -36,16 +36,8 @@ public class StaminaHandler {
     private static final Map<String, Float> animationsStaminaCosts = AnimationStaminaCostRegistry.getAnimationCostMap();
 
     public StaminaHandler() {
-
+        //TODO: Find a way to get the config values for booleans only once (maybe a registry?)
     }
-
-    private static final float BOW_STAMINA_COST = EpicFightStaminaInteractionsConfig.BOW_STAMINA_COST.get().floatValue();
-    private static final float CROSSBOW_STAMINA_COST = EpicFightStaminaInteractionsConfig.CROSSBOW_STAMINA_COST.get().floatValue();
-    private static final float JUMP_STAMINA_COST = EpicFightStaminaInteractionsConfig.JUMP_STAMINA_COST.get().floatValue();
-    private static final boolean isJumpCostEnabled = EpicFightStaminaInteractionsConfig.enableJumpStamina.get();
-    private static final boolean isSprintCostEnabled = EpicFightStaminaInteractionsConfig.enableSprintStamina.get();
-    private static final boolean isDamageScalingCostEnabled = EpicFightStaminaInteractionsConfig.enableDamageScalingCost.get();
-    private static final boolean isAnimationCostEnabled = EpicFightStaminaInteractionsConfig.enableAnimationCosts.get();
 
     @SubscribeEvent
     public static void onPlayerTick(LivingEvent.LivingTickEvent event) {
@@ -56,7 +48,7 @@ public class StaminaHandler {
             if (playerPatch != null) {
                 float currentStamina = playerPatch.getStamina();
 
-                if(player.isSprinting() && !player.isCreative() && isSprintCostEnabled) {
+                if(player.isSprinting() && !player.isCreative() && EpicFightStaminaInteractionsConfig.enableSprintStamina.get()) {
                     float sprintStaminaCost = EpicFightStaminaInteractionsConfig.SPRINT_STAMINA_COST.get().floatValue();
                     playerPatch.setStamina(Math.max(0.0F, currentStamina - sprintStaminaCost));
                     playerPatch.resetActionTick();
@@ -64,7 +56,7 @@ public class StaminaHandler {
 
                 if(manageJumpingConditions(player)) {
                     if (player.getDeltaMovement().y > 0.05F) { //0.05 because by tests it is the value that has been more consistent with consuming less stamina as possible when going out of water
-                        playerPatch.setStamina(Math.max(0.0F, currentStamina - JUMP_STAMINA_COST));
+                        playerPatch.setStamina(Math.max(0.0F, currentStamina - EpicFightStaminaInteractionsConfig.JUMP_STAMINA_COST.get().floatValue()));
                         playerPatch.resetActionTick();
                     }
                 }
@@ -79,10 +71,10 @@ public class StaminaHandler {
                         }
                     } else {
                         if(activeItem == Items.BOW && player.isUsingItem()) {
-                            playerPatch.setStamina(Math.max(0.0F, currentStamina - BOW_STAMINA_COST));
+                            playerPatch.setStamina(Math.max(0.0F, currentStamina - EpicFightStaminaInteractionsConfig.CROSSBOW_STAMINA_COST.get().floatValue()));
                             playerPatch.resetActionTick();
                         } else if (activeItem == Items.CROSSBOW && player.isUsingItem()) {
-                            playerPatch.setStamina(Math.max(0.0F, currentStamina - CROSSBOW_STAMINA_COST));
+                            playerPatch.setStamina(Math.max(0.0F, currentStamina - EpicFightStaminaInteractionsConfig.CROSSBOW_STAMINA_COST.get().floatValue()));
                             playerPatch.resetActionTick();
                         }
                     }
@@ -94,7 +86,7 @@ public class StaminaHandler {
                             }
                             CapabilityItem weaponCapability = playerPatch.getHoldingItemCapability(InteractionHand.MAIN_HAND);
                             if (weaponCapability != null) {
-                                double weaponDamage = isDamageScalingCostEnabled ? player.getAttribute(Attributes.ATTACK_DAMAGE).getValue() : 0.0D;
+                                double weaponDamage = EpicFightStaminaInteractionsConfig.enableDamageScalingCost.get() ? player.getAttribute(Attributes.ATTACK_DAMAGE).getValue() : 0.0D;
                                 WeaponCategory weaponCategory = weaponCapability.getWeaponCategory();
                                 if(weaponCategory instanceof CapabilityItem.WeaponCategories weaponType) {
                                     float weaponStaminaCost = weaponStaminaCosts.getOrDefault(weaponType, 1.0F);
@@ -117,7 +109,7 @@ public class StaminaHandler {
                     });
 
                     playerPatch.getEventListener().addEventListener(PlayerEventListener.EventType.ANIMATION_END_EVENT, playerPatch.getOriginal().getUUID(), animationEndEvent -> {
-                        if(isAnimationCostEnabled) {
+                        if(EpicFightStaminaInteractionsConfig.enableAnimationCosts.get()) {
                             String animationPath =((StaticAnimation) animationEndEvent.getAnimation().getRealAnimation()).getLocation() != null ? ((StaticAnimation) animationEndEvent.getAnimation().getRealAnimation()).getLocation().getPath() : "";
                             if((!animationsStaminaCosts.isEmpty() || !animationPath.isEmpty()) && animationsStaminaCosts.containsKey(animationPath)) {
                                 float animationCost = animationsStaminaCosts.getOrDefault(animationPath, 1.0F);
@@ -156,6 +148,6 @@ public class StaminaHandler {
     }
 
     private static boolean manageJumpingConditions(Player player) {
-        return isJumpCostEnabled && (!player.isCreative() && !player.onClimbable() && !player.isSwimming() && !player.isInWater() && !player.isSleeping());
+        return EpicFightStaminaInteractionsConfig.enableJumpStamina.get() && (!player.isCreative() && !player.onClimbable() && !player.isSwimming() && !player.isInWater() && !player.isSleeping());
     }
 }
