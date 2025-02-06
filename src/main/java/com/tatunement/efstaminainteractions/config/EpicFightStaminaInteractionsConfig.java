@@ -79,7 +79,7 @@ public class EpicFightStaminaInteractionsConfig {
             .define("enableShieldStamina", true);
     public static final ForgeConfigSpec.BooleanValue enableJumpStamina = BUILDER
             .comment("Enable or disable stamina cost for jump (Default: true)")
-            .define("enableSprintStamina", true);
+            .define("enableJumpStamina", true);
     public static final ForgeConfigSpec.BooleanValue enableAnimationCosts = BUILDER
             .comment("Enable or disable stamina multiplier for different animations (Default: true)")
             .define("enableAnimationCost", true);
