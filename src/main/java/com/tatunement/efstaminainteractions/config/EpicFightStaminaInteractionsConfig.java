@@ -81,8 +81,8 @@ public class EpicFightStaminaInteractionsConfig {
             .comment("Enable or disable stamina cost for jump (Default: true)")
             .define("enableJumpStamina", true);
     public static final ForgeConfigSpec.BooleanValue enableAnimationCosts = BUILDER
-            .comment("Enable or disable stamina multiplier for different animations (Default: true)")
-            .define("enableAnimationCost", true);
+            .comment("Enable or disable stamina multiplier for different animations (Default: false)")
+            .define("enableAnimationCost", false);
     public static final ForgeConfigSpec.BooleanValue enableDebugMode = BUILDER
             .comment("Enable or disable Debug Mode (writes in chat the path of every animation when in battle mode. Default: false)")
             .define("enableDebugMode", false);
