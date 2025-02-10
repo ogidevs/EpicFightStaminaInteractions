@@ -14,6 +14,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -55,7 +56,7 @@ public class WeaponStaminaCostRegistry {
 
     public static void registerWeaponStamina() {
         RegisterWeaponStaminaCostEvent event = new RegisterWeaponStaminaCostEvent(WEAPON_CATEGORIES_FLOAT_MAP);
-        MinecraftForge.EVENT_BUS.post(event);
+        ModLoader.get().postEvent(event);
     }
 
     public static Map<WeaponCategory, Float> getWeaponStaminaCosts() {
@@ -64,6 +65,10 @@ public class WeaponStaminaCostRegistry {
 
     public static void addWeaponStamina(WeaponCategory weaponCategory, Float staminaCost) {
         WEAPON_CATEGORIES_FLOAT_MAP.put(weaponCategory, staminaCost);
+    }
+
+    public static void mergeWeaponStaminaMap(Map<WeaponCategory, Float> weaponStaminaCostMapToMerge) {
+        WEAPON_CATEGORIES_FLOAT_MAP.putAll(weaponStaminaCostMapToMerge);
     }
 
     @SubscribeEvent

@@ -14,6 +14,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -34,7 +35,7 @@ public class AnimationStaminaCostRegistry {
 
     public static void registerAnimationStamina() {
         RegisterAnimationStaminaCostEvent event = new RegisterAnimationStaminaCostEvent(ANIMATION_COST_MAP);
-        MinecraftForge.EVENT_BUS.post(event);
+        ModLoader.get().postEvent(event);
     }
 
     public static Map<String, Float> getAnimationCostMap() {

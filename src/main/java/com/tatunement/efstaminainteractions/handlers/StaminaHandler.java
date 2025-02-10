@@ -2,8 +2,6 @@ package com.tatunement.efstaminainteractions.handlers;
 
 import com.tatunement.efstaminainteractions.EpicFightStaminaInteractionsMod;
 import com.tatunement.efstaminainteractions.config.EpicFightStaminaInteractionsConfig;
-import com.tatunement.efstaminainteractions.registries.AnimationStaminaCostRegistry;
-import com.tatunement.efstaminainteractions.registries.WeaponStaminaCostRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.OutgoingChatMessage;
@@ -17,7 +15,6 @@ import net.minecraft.world.item.Items;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.ShieldBlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fml.common.Mod;
 import yesman.epicfight.api.animation.types.StaticAnimation;
 import yesman.epicfight.world.capabilities.EpicFightCapabilities;
@@ -30,13 +27,20 @@ import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = EpicFightStaminaInteractionsMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class StaminaHandler {
+    private static Map<WeaponCategory, Float> weaponStaminaCosts;
 
-    private static final Map<WeaponCategory, Float> weaponStaminaCosts = WeaponStaminaCostRegistry.getWeaponStaminaCosts();
-
-    private static final Map<String, Float> animationsStaminaCosts = AnimationStaminaCostRegistry.getAnimationCostMap();
+    private static Map<String, Float> animationsStaminaCosts;
 
     public StaminaHandler() {
         //TODO: Find a way to get the config values for booleans only once (maybe a registry?)
+    }
+
+    public static void setWeaponStaminaCosts(Map<WeaponCategory, Float> weaponStaminaCosts) {
+        StaminaHandler.weaponStaminaCosts = weaponStaminaCosts;
+    }
+
+    public static void setAnimationsStaminaCosts(Map<String, Float> animationsStaminaCosts) {
+        StaminaHandler.animationsStaminaCosts = animationsStaminaCosts;
     }
 
     @SubscribeEvent
@@ -88,8 +92,8 @@ public class StaminaHandler {
                             if (weaponCapability != null) {
                                 double weaponDamage = EpicFightStaminaInteractionsConfig.enableDamageScalingCost.get() ? player.getAttribute(Attributes.ATTACK_DAMAGE).getValue() : 0.0D;
                                 WeaponCategory weaponCategory = weaponCapability.getWeaponCategory();
-                                if(weaponCategory instanceof CapabilityItem.WeaponCategories weaponType) {
-                                    float weaponStaminaCost = weaponStaminaCosts.getOrDefault(weaponType, 1.0F);
+                                if(weaponCategory != null) {
+                                    float weaponStaminaCost = weaponStaminaCosts.getOrDefault(weaponCategory, 1.0F);
                                     float attackStaminaCost = (float)(weaponDamage * 0.54D + weaponStaminaCost);
                                     float newStamina = Math.max(0.0F, currentStamina - attackStaminaCost);
                                     playerPatch.setStamina(newStamina);
