@@ -10,12 +10,11 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 import org.spongepowered.asm.launch.MixinBootstrap;
-import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.Mixins;
-import org.spongepowered.asm.service.MixinService;
 
 @Mod(EpicFightStaminaInteractionsMod.MODID)
 public class EpicFightStaminaInteractionsMod {
@@ -33,10 +32,7 @@ public class EpicFightStaminaInteractionsMod {
         LOGGER.info("Reading Configuration File");
         context.registerConfig(ModConfig.Type.COMMON, EpicFightStaminaInteractionsConfig.CONFIG_SPEC);
 
-        LOGGER.info("Loading stamina consumption for each weapon category...");
-        WeaponStaminaCostRegistry.registerWeaponStamina();
-        LOGGER.info("Loading customized stamina cost for animations if set...");
-        AnimationStaminaCostRegistry.registerAnimationStamina();
+        modEventBus.addListener(this::onLoadComplete);
         LOGGER.info("Loading Mixins configuration");
         MixinBootstrap.init();
         Mixins.addConfiguration("mixins.efstaminainteractions.json");
@@ -48,5 +44,12 @@ public class EpicFightStaminaInteractionsMod {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         LOGGER.info("Loading EpicFight Stamina Interactions...");
+    }
+
+    private void onLoadComplete(final FMLLoadCompleteEvent event) {
+        LOGGER.info("Loading stamina consumption for each weapon category...");
+        WeaponStaminaCostRegistry.registerWeaponStamina();
+        LOGGER.info("Loading customized stamina cost for animations if set...");
+        AnimationStaminaCostRegistry.registerAnimationStamina();
     }
 }
