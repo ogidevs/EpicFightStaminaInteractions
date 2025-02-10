@@ -94,6 +94,7 @@ public class WeaponStaminaCostRegistry {
                         }
                     }
                 }
+                registerWeaponStamina();
             }
         });
     }

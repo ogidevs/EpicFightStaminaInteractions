@@ -77,10 +77,11 @@ public class AnimationStaminaCostRegistry {
                         } catch (NumberFormatException e) {
                             LOGGER.error("Invalid stamina cost for " + animationEntry.getKey() + ": " + animationEntry.getValue(), e);
                         } catch (Exception e){
-                            LOGGER.error("Error processing weapon category: " + animationEntry.getKey(), e);
+                            LOGGER.error("Error processing animation path: " + animationEntry.getKey(), e);
                         }
                     }
                 }
+                registerAnimationStamina();
             }
         });
     }
