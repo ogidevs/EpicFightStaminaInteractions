@@ -1,8 +1,6 @@
 package com.tatunement.efstaminainteractions.handlers;
 
 import com.tatunement.efstaminainteractions.EpicFightStaminaInteractionsMod;
-import com.tatunement.efstaminainteractions.animations.StaminaAnimations;
-import com.tatunement.efstaminainteractions.animations.StaminaMotions;
 import com.tatunement.efstaminainteractions.config.EpicFightStaminaInteractionsConfig;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -14,10 +12,7 @@ import net.minecraftforge.event.entity.living.ShieldBlockEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import yesman.epicfight.api.animation.LivingMotion;
-import yesman.epicfight.api.animation.LivingMotions;
 import yesman.epicfight.api.animation.types.StaticAnimation;
-import yesman.epicfight.gameasset.Animations;
 import yesman.epicfight.world.capabilities.EpicFightCapabilities;
 import yesman.epicfight.world.capabilities.entitypatch.player.PlayerPatch;
 import yesman.epicfight.world.capabilities.item.CapabilityItem;
@@ -99,15 +94,6 @@ public class StaminaHandler {
                         float currentStamina = playerPatch.getStamina();
                         playerPatch.setStamina(Math.max(0.0F, currentStamina - animationCost));
                     }
-                }
-            }
-        });
-
-        playerPatch.getEventListener().addEventListener(PlayerEventListener.EventType.ANIMATION_BEGIN_EVENT, playerPatch.getOriginal().getUUID(), event -> {
-            if (EpicFightStaminaInteractionsConfig.enableDebugMode.get() && playerPatch.isLogicalClient()) {
-                StaticAnimation animation = event.getAnimation().getRealAnimation().get();
-                if (animation != null && animation.getLocation() != null) {
-                    playerPatch.getOriginal().sendSystemMessage(Component.literal("[DEBUG] Anim Begin: " + animation.getLocation()));
                 }
             }
         });
