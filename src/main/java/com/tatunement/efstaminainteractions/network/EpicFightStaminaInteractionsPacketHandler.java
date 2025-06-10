@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 public class EpicFightStaminaInteractionsPacketHandler {
     private static final String PROTOCOL_VERSION = "1";
     public static final SimpleChannel PACKET_HANDLER = NetworkRegistry.newSimpleChannel(
-            new ResourceLocation(EpicFightStaminaInteractionsMod.MODID, "main"),
+            ResourceLocation.fromNamespaceAndPath(EpicFightStaminaInteractionsMod.MODID, "main"),
             () -> PROTOCOL_VERSION,
             PROTOCOL_VERSION::equals,
             PROTOCOL_VERSION::equals
